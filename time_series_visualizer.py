@@ -6,6 +6,7 @@ import seaborn as sns
 df = pd.read_csv("fcc-forum-pageviews.csv", parse_dates=["date"], index_col="date")
 
 # 2. Clean data (remove top 2.5% and bottom 2.5%)
+df = df[["value"]]
 lower = df["value"].quantile(0.025)
 upper = df["value"].quantile(0.975)
 df = df[(df["value"] >= lower) & (df["value"] <= upper)]
@@ -27,29 +28,28 @@ def draw_line_plot():
 
 # 4. Bar Plot
 def draw_bar_plot():
-    # Prepare data
     df_bar = df.copy()
     df_bar["year"] = df_bar.index.year
     df_bar["month"] = df_bar.index.month
 
-    # Group by year and month
     df_grouped = df_bar.groupby(["year", "month"])["value"].mean().unstack()
 
-    # Plot
     fig = df_grouped.plot(kind="bar", figsize=(12, 8)).figure
 
     plt.xlabel("Years")
     plt.ylabel("Average Page Views")
 
-    # Month names for legend
-    month_names = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ]
-    plt.legend(month_names, title="Months")
+    plt.legend(
+        [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ],
+        title="Months"
+    )
 
     plt.tight_layout()
     return fig
+
 
 
 # 5. Box Plot
